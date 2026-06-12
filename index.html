@@ -20,7 +20,7 @@
       overflow-y: auto;
       font-family: 'Baloo 2', cursive;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       position: relative;
       -webkit-tap-highlight-color: transparent;
@@ -51,6 +51,7 @@
       width: 100%; max-width: 420px;
       min-height: 100vh; min-height: 100dvh;
       padding: 2rem 1.2rem;
+      padding-bottom: max(2rem, env(safe-area-inset-bottom));
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       text-align: center; gap: 0;
@@ -256,6 +257,7 @@
     .export-row {
       display: flex; flex-direction: column; gap: 0.7rem;
       width: 100%; margin-top: 0.8rem;
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
     }
     .btn-export { margin-top: 0; width: 100%; }
     .btn-whats {
