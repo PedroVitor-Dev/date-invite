@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>💖 Tenho algo pra te perguntar... 💖</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Pacifico&family=Satisfy&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Pacifico&family=Satisfy&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,7 +13,7 @@
       min-height: 100vh;
       background: #e84e0f;
       overflow: hidden;
-      font-family: 'Lilita One', cursive;
+      font-family: 'Baloo 2', cursive;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -70,7 +71,7 @@
     .balao {
       background: #fff;
       color: #3a1a00;
-      font-family: 'Lilita One', cursive;
+      font-family: 'Baloo 2', cursive;
       font-size: 1rem;
       padding: 6px 20px;
       border-radius: 20px;
@@ -98,7 +99,7 @@
     }
 
     .pergunta {
-      font-family: 'Lilita One', cursive;
+      font-family: 'Baloo 2', cursive;
       font-size: 1.6rem;
       color: #fff;
       text-transform: uppercase;
@@ -112,7 +113,7 @@
       display: flex; gap: 1rem; justify-content: center; width: 100%;
     }
     .btn-sim {
-      font-family: 'Lilita One', cursive;
+      font-family: 'Baloo 2', cursive;
       font-size: 1.3rem;
       letter-spacing: 1px;
       padding: 0.7rem 2.5rem;
@@ -129,7 +130,7 @@
     .btn-sim:hover  { transform: scale(1.05); }
 
     .btn-nao {
-      font-family: 'Lilita One', cursive;
+      font-family: 'Baloo 2', cursive;
       font-size: 1.3rem;
       letter-spacing: 1px;
       padding: 0.7rem 2rem;
@@ -161,7 +162,7 @@
       text-shadow: 0 0 8px rgba(255,100,0,0.5);
     }
     .btn-proximo {
-      font-family: 'Lilita One', cursive;
+      font-family: 'Baloo 2', cursive;
       font-size: 1.2rem;
       padding: 0.75rem 2.2rem;
       border-radius: 50px; border: none; cursor: pointer;
@@ -178,7 +179,7 @@
     .btn-proximo:disabled { opacity: 0.45; pointer-events: none; }
 
     .date-input {
-      font-family: 'Lilita One', cursive;
+      font-family: 'Baloo 2', cursive;
       font-size: 1rem;
       padding: 0.7rem 1rem;
       border-radius: 18px;
@@ -202,7 +203,7 @@
       border: 2px solid rgba(255,100,30,0.4);
       border-radius: 18px;
       padding: 0.9rem 0.4rem;
-      font-family: 'Lilita One', cursive;
+      font-family: 'Baloo 2', cursive;
       font-size: 1.05rem;
       color: #fff;
       cursor: pointer;
@@ -239,6 +240,15 @@
     }
 
     .divisor { font-size: 1.3rem; letter-spacing: 8px; margin: 0.6rem 0; }
+
+    .export-row {
+      display: flex; flex-direction: column; gap: 0.7rem;
+      width: 100%; margin-top: 0.8rem;
+    }
+    .btn-export { margin-top: 0; width: 100%; }
+    .btn-whats {
+      background: linear-gradient(160deg, #2bd966, #1a9e4a);
+    }
 
     /* ===== CONFETE FINAL ===== */
     .confete { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
@@ -328,6 +338,10 @@
     <p class="subtitulo-step" style="margin-top:0.5rem; font-size:0.95rem;">
       Fica pronta que eu vou te buscar 🥰
     </p>
+    <div class="export-row">
+      <button class="btn-proximo btn-export" onclick="exportarPNG()">📸 Salvar como imagem</button>
+      <button class="btn-proximo btn-export btn-whats" onclick="compartilharWhats()">📲 Enviar no WhatsApp</button>
+    </div>
   </div>
 
 </div>
@@ -423,7 +437,50 @@
     dispararConfete();
   }
 
-  /* ===== CONFETE ===== */
+  /* ===== EXPORTAR COMO IMAGEM ===== */
+  function exportarPNG() {
+    const card = document.getElementById('step5');
+    const exportRow = card.querySelector('.export-row');
+    exportRow.style.display = 'none';
+    html2canvas(card, { backgroundColor: '#e84e0f', scale: 2 }).then(canvas => {
+      exportRow.style.display = 'flex';
+      const link = document.createElement('a');
+      link.download = 'resposta-date.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+
+  async function compartilharWhats() {
+    const card = document.getElementById('step5');
+    const exportRow = card.querySelector('.export-row');
+    exportRow.style.display = 'none';
+    const canvas = await html2canvas(card, { backgroundColor: '#e84e0f', scale: 2 });
+    exportRow.style.display = 'flex';
+
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], 'resposta-date.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'Resposta do date 💖',
+            text: 'Olha minha resposta! 💖'
+          });
+          return;
+        } catch (e) { /* usuário cancelou ou erro, segue fallback */ }
+      }
+      // Fallback: baixa a imagem e abre o WhatsApp
+      const link = document.createElement('a');
+      link.download = 'resposta-date.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      setTimeout(() => {
+        window.open('https://wa.me/?text=' + encodeURIComponent('Olha minha resposta pro date! 💖 (segue a imagem que acabei de salvar)'), '_blank');
+      }, 500);
+    }, 'image/png');
+  }
+
   function dispararConfete() {
     const c = document.getElementById('confete');
     c.innerHTML = '';
