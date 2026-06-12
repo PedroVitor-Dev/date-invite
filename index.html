@@ -27,6 +27,66 @@
       touch-action: manipulation;
     }
 
+
+
+    /* ===== INTRO: TURBILHÃO DE CORAÇÕES ===== */
+    body.intro-active {
+      overflow: hidden;
+    }
+    body.intro-active .container,
+    body.intro-active .coracoes-bg {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .container,
+    .coracoes-bg {
+      transition: opacity 0.45s ease;
+    }
+    .intro-hearts {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      overflow: hidden;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 55%, rgba(255, 210, 220, 0.34), transparent 26%),
+        radial-gradient(circle at 50% 100%, rgba(255, 72, 130, 0.32), transparent 38%),
+        #e84e0f;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.55s ease, visibility 0.55s ease;
+    }
+    .intro-hearts.done {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .intro-heart {
+      position: absolute;
+      left: 50%;
+      bottom: -14vh;
+      font-size: 1.5rem;
+      line-height: 1;
+      opacity: 0;
+      will-change: transform, opacity;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.28));
+      animation: heartTornadoUp 1.9s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+    @keyframes heartTornadoUp {
+      0% {
+        transform: translate3d(var(--start-x), 14vh, 0) rotate(0deg) scale(0.35);
+        opacity: 0;
+      }
+      12% { opacity: 1; }
+      55% {
+        transform: translate3d(calc(var(--start-x) + var(--mid-x)), -45vh, 0) rotate(var(--rot)) scale(1.08);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(calc(var(--start-x) + var(--end-x)), -118vh, 0) rotate(var(--rot2)) scale(0.72);
+        opacity: 0;
+      }
+    }
+
     /* ===== CORAÇÕES 3D FLUTUANTES DE FUNDO ===== */
     .coracoes-bg {
       position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
@@ -254,12 +314,45 @@
 
     .divisor { font-size: 1.3rem; letter-spacing: 8px; margin: 0.6rem 0; }
 
-    .export-row {
-      display: flex; flex-direction: column; gap: 0.7rem;
-      width: 100%; margin-top: 0.8rem;
-      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    .save-area {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 0.8rem;
+      padding-bottom: max(0.8rem, env(safe-area-inset-bottom));
     }
-    .btn-export { margin-top: 0; width: 100%; }
+    .btn-save-main {
+      width: auto;
+      min-height: 0;
+      margin-top: 0;
+      padding: 0.42rem 0.95rem;
+      font-size: clamp(0.78rem, 3.4vw, 0.92rem);
+      border-radius: 999px;
+      background: linear-gradient(160deg, #ff5c9a, #d43a00);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 12px rgba(255,120,160,0.22);
+      letter-spacing: 0.5px;
+    }
+    .export-screen {
+      min-height: 100vh;
+      min-height: 100dvh;
+      justify-content: center;
+      gap: 0.9rem;
+      padding-inline: 0.2rem;
+    }
+    .export-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 420px;
+      padding: 0 0.2rem max(1rem, env(safe-area-inset-bottom));
+    }
+    .btn-export {
+      margin-top: 0;
+      width: 100%;
+      min-height: 54px;
+      padding-inline: 1rem;
+    }
     .btn-whats {
       background: linear-gradient(160deg, #2bd966, #1a9e4a);
     }
@@ -281,6 +374,8 @@
       .btns-row { gap: 0.6rem; }
       .btn-sim { padding: 0.65rem 1.8rem; }
       .opcoes { gap: 0.5rem; }
+      .btn-export { border-radius: 24px; }
+      .intro-heart { font-size: 1.2rem; }
     }
     @media (max-height: 700px) {
       .container { padding: 1rem 1.2rem; justify-content: flex-start; }
@@ -288,7 +383,9 @@
     }
   </style>
 </head>
-<body>
+<body class="intro-active">
+
+<div class="intro-hearts" id="introHearts" aria-hidden="true"></div>
 
 <div class="coracoes-bg" id="bgHearts"></div>
 
@@ -364,9 +461,16 @@
     <p class="subtitulo-step" style="margin-top:0.5rem; font-size:0.95rem;">
       Fica pronta que eu vou te buscar 🥰
     </p>
-    <div class="export-row">
-      <button class="btn-proximo btn-export" onclick="exportarPNG()">📸 Salvar como imagem</button>
-      <button class="btn-proximo btn-export btn-whats" onclick="compartilharWhats()">📲 Enviar no WhatsApp</button>
+    <div class="save-area">
+      <button class="btn-proximo btn-save-main" type="button" onclick="irParaExportar()">SALVAR/ENVIAR 💌</button>
+    </div>
+  </div>
+
+  <!-- ======= PASSO 6: EXPORTAR ======= -->
+  <div class="step export-screen" id="step6">
+    <div class="export-row" id="exportOptions">
+      <button class="btn-proximo btn-export" type="button" onclick="exportarPNG()">📸 Salvar como imagem</button>
+      <button class="btn-proximo btn-export btn-whats" type="button" onclick="compartilharWhats()">📲 Enviar no WhatsApp</button>
     </div>
   </div>
 
@@ -388,6 +492,50 @@
     s.style.animationDelay = (Math.random() * 9) + 's';
     s.style.filter = 'drop-shadow(0 4px 8px rgba(0,0,0,0.5)) brightness(0.5)';
     bgEl.appendChild(s);
+  }
+
+
+
+  /* ===== INTRO: TURBILHÃO DE CORAÇÕES ===== */
+  function iniciarIntroCoracoes() {
+    const intro = document.getElementById('introHearts');
+    const reduzirMovimento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!intro || reduzirMovimento) {
+      finalizarIntroCoracoes();
+      return;
+    }
+
+    const introEmojis = ['💖','💕','💗','💘','💝','❤️','💜','🧡'];
+    const total = window.innerWidth < 480 ? 42 : 70;
+
+    for (let i = 0; i < total; i++) {
+      const s = document.createElement('span');
+      s.className = 'intro-heart';
+      s.textContent = introEmojis[Math.floor(Math.random() * introEmojis.length)];
+      s.style.setProperty('--start-x', (Math.random() * 56 - 28).toFixed(1) + 'vw');
+      s.style.setProperty('--mid-x', (Math.random() * 78 - 39).toFixed(1) + 'vw');
+      s.style.setProperty('--end-x', (Math.random() * 96 - 48).toFixed(1) + 'vw');
+      s.style.setProperty('--rot', (Math.random() * 720 - 360).toFixed(0) + 'deg');
+      s.style.setProperty('--rot2', (Math.random() * 1080 - 540).toFixed(0) + 'deg');
+      s.style.fontSize = (Math.random() * 1.7 + 0.95).toFixed(2) + 'rem';
+      s.style.animationDuration = (Math.random() * 0.75 + 1.6).toFixed(2) + 's';
+      s.style.animationDelay = (Math.random() * 0.58).toFixed(2) + 's';
+      intro.appendChild(s);
+    }
+
+    setTimeout(finalizarIntroCoracoes, 2600);
+  }
+
+  function finalizarIntroCoracoes() {
+    const intro = document.getElementById('introHearts');
+    document.body.classList.remove('intro-active');
+    posicionarNaoInicial();
+
+    if (intro) {
+      intro.classList.add('done');
+      setTimeout(() => intro.remove(), 650);
+    }
   }
 
   /* ===== VARIÁVEIS ===== */
@@ -424,8 +572,10 @@
   btnNao.addEventListener('pointerdown', (e) => { e.preventDefault(); escapar(); });
   btnNao.addEventListener('touchstart', (e) => { e.preventDefault(); escapar(); }, { passive: false });
 
-  window.addEventListener('load', posicionarNaoInicial);
-  window.addEventListener('resize', posicionarNaoInicial);
+  window.addEventListener('load', iniciarIntroCoracoes);
+  window.addEventListener('resize', () => {
+    if (!document.body.classList.contains('intro-active')) posicionarNaoInicial();
+  });
 
   /* ===== NAVEGAÇÃO ===== */
   function irPara(id) {
@@ -466,28 +616,48 @@
     dispararConfete();
   }
 
-  /* ===== EXPORTAR COMO IMAGEM ===== */
-  function exportarPNG() {
-    if (typeof html2canvas === 'undefined') { alert('Carregando recursos, aguarde um instante e tente de novo 💖'); return; }
+  function irParaExportar() {
+    irPara('step6');
+  }
+
+  async function capturarRespostaFinal() {
     const card = document.getElementById('step5');
-    const exportRow = card.querySelector('.export-row');
-    exportRow.style.display = 'none';
-    html2canvas(card, { backgroundColor: '#e84e0f', scale: 2 }).then(canvas => {
-      exportRow.style.display = 'flex';
-      const link = document.createElement('a');
-      link.download = 'resposta-date.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    });
+    const saveArea = card.querySelector('.save-area');
+    const stepAtivo = document.querySelector('.step.active');
+    const estavaAtivo = card.classList.contains('active');
+    const displayOriginal = saveArea.style.display;
+
+    if (!estavaAtivo) {
+      stepAtivo?.classList.remove('active');
+      card.classList.add('active');
+    }
+
+    saveArea.style.display = 'none';
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const canvas = await html2canvas(card, { backgroundColor: '#e84e0f', scale: 2 });
+    saveArea.style.display = displayOriginal;
+
+    if (!estavaAtivo) {
+      card.classList.remove('active');
+      stepAtivo?.classList.add('active');
+    }
+
+    return canvas;
+  }
+
+  /* ===== EXPORTAR COMO IMAGEM ===== */
+  async function exportarPNG() {
+    if (typeof html2canvas === 'undefined') { alert('Carregando recursos, aguarde um instante e tente de novo 💖'); return; }
+    const canvas = await capturarRespostaFinal();
+    const link = document.createElement('a');
+    link.download = 'resposta-date.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
   }
 
   async function compartilharWhats() {
     if (typeof html2canvas === 'undefined') { alert('Carregando recursos, aguarde um instante e tente de novo 💖'); return; }
-    const card = document.getElementById('step5');
-    const exportRow = card.querySelector('.export-row');
-    exportRow.style.display = 'none';
-    const canvas = await html2canvas(card, { backgroundColor: '#e84e0f', scale: 2 });
-    exportRow.style.display = 'flex';
+    const canvas = await capturarRespostaFinal();
 
     canvas.toBlob(async (blob) => {
       const file = new File([blob], 'resposta-date.png', { type: 'image/png' });
