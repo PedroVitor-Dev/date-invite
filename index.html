@@ -2,22 +2,29 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>💖 Tenho algo pra te perguntar... 💖</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Pacifico&family=Satisfy&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { height: 100%; }
     body {
       min-height: 100vh;
+      min-height: 100dvh;
       background: #e84e0f;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       font-family: 'Baloo 2', cursive;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     /* ===== CORAÇÕES 3D FLUTUANTES DE FUNDO ===== */
@@ -41,8 +48,9 @@
     /* ===== CONTAINER PRINCIPAL ===== */
     .container {
       position: relative; z-index: 1;
-      width: 100%; max-width: 420px; min-height: 100vh;
-      padding: 2.5rem 1.5rem;
+      width: 100%; max-width: 420px;
+      min-height: 100vh; min-height: 100dvh;
+      padding: 2rem 1.2rem;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       text-align: center; gap: 0;
@@ -57,7 +65,9 @@
 
     /* ===== EMOJI ===== */
     .emoji-img {
-      width: 200px; height: 200px; object-fit: contain;
+      width: clamp(140px, 45vw, 200px);
+      height: clamp(140px, 45vw, 200px);
+      object-fit: contain;
       filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
       animation: balanco 2.2s ease-in-out infinite;
       margin-bottom: -10px;
@@ -100,7 +110,7 @@
 
     .pergunta {
       font-family: 'Baloo 2', cursive;
-      font-size: 1.6rem;
+      font-size: clamp(1.25rem, 6vw, 1.6rem);
       color: #fff;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -114,7 +124,7 @@
     }
     .btn-sim {
       font-family: 'Baloo 2', cursive;
-      font-size: 1.3rem;
+      font-size: clamp(1.05rem, 5vw, 1.3rem);
       letter-spacing: 1px;
       padding: 0.7rem 2.5rem;
       border-radius: 50px;
@@ -131,7 +141,7 @@
 
     .btn-nao {
       font-family: 'Baloo 2', cursive;
-      font-size: 1.3rem;
+      font-size: clamp(1.05rem, 5vw, 1.3rem);
       letter-spacing: 1px;
       padding: 0.7rem 2rem;
       border-radius: 50px;
@@ -150,20 +160,20 @@
     /* ===== PASSOS 2-5 ===== */
     .titulo-step {
       font-family: 'Pacifico', cursive;
-      font-size: 1.7rem;
+      font-size: clamp(1.35rem, 6.5vw, 1.7rem);
       color: #fff;
       text-shadow: 0 0 14px rgba(255,80,0,0.6), 2px 2px 0 rgba(0,0,0,0.4);
       margin-bottom: 0.5rem;
     }
     .subtitulo-step {
       font-family: 'Satisfy', cursive;
-      font-size: 1.15rem;
+      font-size: clamp(1rem, 4.5vw, 1.15rem);
       color: #ffe0c8;
       text-shadow: 0 0 8px rgba(255,100,0,0.5);
     }
     .btn-proximo {
       font-family: 'Baloo 2', cursive;
-      font-size: 1.2rem;
+      font-size: clamp(1rem, 4.5vw, 1.2rem);
       padding: 0.75rem 2.2rem;
       border-radius: 50px; border: none; cursor: pointer;
       background: linear-gradient(160deg, #ff6a1a, #d43a00);
@@ -204,7 +214,7 @@
       border-radius: 18px;
       padding: 0.9rem 0.4rem;
       font-family: 'Baloo 2', cursive;
-      font-size: 1.05rem;
+      font-size: clamp(0.9rem, 4vw, 1.05rem);
       color: #fff;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s, transform 0.15s;
@@ -219,7 +229,9 @@
     }
 
     .pinguim-img {
-      width: 220px; height: 220px; object-fit: contain;
+      width: clamp(150px, 50vw, 220px);
+      height: clamp(150px, 50vw, 220px);
+      object-fit: contain;
       filter: drop-shadow(0 0 22px rgba(255,120,30,0.7));
       animation: swing 1.8s ease-in-out infinite;
     }
@@ -259,6 +271,18 @@
     }
     @keyframes fallDown {
       to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ===== AJUSTES PARA TELAS PEQUENAS / BAIXAS ===== */
+    @media (max-width: 360px) {
+      .card { padding: 1.2rem 1rem 1.1rem; gap: 0.8rem; }
+      .btns-row { gap: 0.6rem; }
+      .btn-sim { padding: 0.65rem 1.8rem; }
+      .opcoes { gap: 0.5rem; }
+    }
+    @media (max-height: 700px) {
+      .container { padding: 1rem 1.2rem; justify-content: flex-start; }
+      .emoji-img, .pinguim-img { margin-top: 0.5rem; }
     }
   </style>
 </head>
@@ -352,7 +376,8 @@
   /* ===== CORAÇÕES 3D DE FUNDO ===== */
   const bgEl = document.getElementById('bgHearts');
   const heartEmojis = ['🖤','🖤','🖤','💙','🖤','🖤','💜'];
-  for (let i = 0; i < 18; i++) {
+  const numHearts = window.innerWidth < 480 ? 10 : 18;
+  for (let i = 0; i < numHearts; i++) {
     const s = document.createElement('span');
     s.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
     s.style.left = Math.random() * 100 + '%';
@@ -380,20 +405,22 @@
   }
 
   function escapar() {
-    const margin = 20;
+    const margin = 14;
+    const vw = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     const bw = btnNao.offsetWidth || 100;
     const bh = btnNao.offsetHeight || 50;
-    const maxX = window.innerWidth - bw - margin;
-    const maxY = window.innerHeight - bh - margin;
-    const rx = Math.floor(Math.random() * (maxX - margin)) + margin;
-    const ry = Math.floor(Math.random() * (maxY - margin)) + margin;
+    const maxX = Math.max(margin, vw - bw - margin);
+    const maxY = Math.max(margin, vh - bh - margin);
+    const rx = Math.random() * (maxX - margin) + margin;
+    const ry = Math.random() * (maxY - margin) + margin;
     btnNao.style.left = rx + 'px';
     btnNao.style.top  = ry + 'px';
   }
 
   btnNao.addEventListener('mouseenter', escapar);
-  btnNao.addEventListener('touchstart', (e) => { e.preventDefault(); escapar(); });
-  btnNao.addEventListener('click', escapar);
+  btnNao.addEventListener('pointerdown', (e) => { e.preventDefault(); escapar(); });
+  btnNao.addEventListener('touchstart', (e) => { e.preventDefault(); escapar(); }, { passive: false });
 
   window.addEventListener('load', posicionarNaoInicial);
   window.addEventListener('resize', posicionarNaoInicial);
@@ -439,6 +466,7 @@
 
   /* ===== EXPORTAR COMO IMAGEM ===== */
   function exportarPNG() {
+    if (typeof html2canvas === 'undefined') { alert('Carregando recursos, aguarde um instante e tente de novo 💖'); return; }
     const card = document.getElementById('step5');
     const exportRow = card.querySelector('.export-row');
     exportRow.style.display = 'none';
@@ -452,6 +480,7 @@
   }
 
   async function compartilharWhats() {
+    if (typeof html2canvas === 'undefined') { alert('Carregando recursos, aguarde um instante e tente de novo 💖'); return; }
     const card = document.getElementById('step5');
     const exportRow = card.querySelector('.export-row');
     exportRow.style.display = 'none';
@@ -485,7 +514,8 @@
     const c = document.getElementById('confete');
     c.innerHTML = '';
     const lista = ['💖','🌹','💕','✨','💗','🌸','💝','⭐','🎉','❤️'];
-    for (let i = 0; i < 40; i++) {
+    const total = window.innerWidth < 480 ? 24 : 40;
+    for (let i = 0; i < total; i++) {
       const s = document.createElement('span');
       s.textContent = lista[Math.floor(Math.random() * lista.length)];
       s.style.left = Math.random() * 100 + 'vw';
