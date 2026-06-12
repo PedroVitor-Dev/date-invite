@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💖 Tenho algo pra te perguntar... 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Pacifico&family=Satisfy&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #e84e0f;
+      overflow: hidden;
+      font-family: 'Lilita One', cursive;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* ===== CORAÇÕES 3D FLUTUANTES DE FUNDO ===== */
+    .coracoes-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .coracoes-bg span {
+      position: absolute;
+      font-size: 2.2rem;
+      animation: floatHeart linear infinite;
+      opacity: 0;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+    }
+    @keyframes floatHeart {
+      0%   { transform: translateY(110vh) scale(0.6) rotate(-15deg); opacity: 0; }
+      10%  { opacity: 0.85; }
+      90%  { opacity: 0.85; }
+      100% { transform: translateY(-10vh) scale(1.1) rotate(15deg); opacity: 0; }
+    }
+
+    /* ===== CONTAINER PRINCIPAL ===== */
+    .container {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 420px; min-height: 100vh;
+      padding: 2.5rem 1.5rem;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; gap: 0;
+    }
+
+    .step { display: none; flex-direction: column; align-items: center; width: 100%; }
+    .step.active { display: flex; animation: popIn 0.45s cubic-bezier(.36,1.6,.6,1); }
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ===== EMOJI ===== */
+    .emoji-img {
+      width: 200px; height: 200px; object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
+      animation: balanco 2.2s ease-in-out infinite;
+      margin-bottom: -10px;
+    }
+    @keyframes balanco {
+      0%,100% { transform: rotate(-3deg) scale(1); }
+      50%      { transform: rotate(3deg) scale(1.04); }
+    }
+
+    /* ===== BALÃO "PENSA BEM" ===== */
+    .balao {
+      background: #fff;
+      color: #3a1a00;
+      font-family: 'Lilita One', cursive;
+      font-size: 1rem;
+      padding: 6px 20px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .balao::after {
+      content: '';
+      position: absolute;
+      top: -10px; left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-bottom-color: #fff;
+    }
+
+    /* ===== CARD ESCURO ===== */
+    .card {
+      background: rgba(40, 10, 0, 0.82);
+      border-radius: 22px;
+      padding: 1.6rem 1.4rem 1.4rem;
+      width: 100%;
+      display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    }
+
+    .pergunta {
+      font-family: 'Lilita One', cursive;
+      font-size: 1.6rem;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      line-height: 1.3;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+
+    /* ===== BOTÕES SIM/NÃO ===== */
+    .btns-row {
+      display: flex; gap: 1rem; justify-content: center; width: 100%;
+    }
+    .btn-sim {
+      font-family: 'Lilita One', cursive;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      padding: 0.7rem 2.5rem;
+      border-radius: 50px;
+      border: none; cursor: pointer;
+      background: linear-gradient(160deg, #ff6a1a, #d43a00);
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: transform 0.15s;
+      text-transform: uppercase;
+    }
+    .btn-sim:active { transform: scale(0.95); }
+    .btn-sim:hover  { transform: scale(1.05); }
+
+    .btn-nao {
+      font-family: 'Lilita One', cursive;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      padding: 0.7rem 2rem;
+      border-radius: 50px;
+      border: none; cursor: pointer;
+      background: linear-gradient(160deg, #888, #555);
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+      text-transform: uppercase;
+      position: fixed;
+      transition: top 0.18s cubic-bezier(.36,1.4,.6,1), left 0.18s cubic-bezier(.36,1.4,.6,1);
+      z-index: 999;
+      user-select: none;
+    }
+
+    /* ===== PASSOS 2-5 ===== */
+    .titulo-step {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.7rem;
+      color: #fff;
+      text-shadow: 0 0 14px rgba(255,80,0,0.6), 2px 2px 0 rgba(0,0,0,0.4);
+      margin-bottom: 0.5rem;
+    }
+    .subtitulo-step {
+      font-family: 'Satisfy', cursive;
+      font-size: 1.15rem;
+      color: #ffe0c8;
+      text-shadow: 0 0 8px rgba(255,100,0,0.5);
+    }
+    .btn-proximo {
+      font-family: 'Lilita One', cursive;
+      font-size: 1.2rem;
+      padding: 0.75rem 2.2rem;
+      border-radius: 50px; border: none; cursor: pointer;
+      background: linear-gradient(160deg, #ff6a1a, #d43a00);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 0.5rem;
+    }
+    .btn-proximo:hover  { transform: scale(1.05); }
+    .btn-proximo:active { transform: scale(0.95); }
+    .btn-proximo:disabled { opacity: 0.45; pointer-events: none; }
+
+    .date-input {
+      font-family: 'Lilita One', cursive;
+      font-size: 1rem;
+      padding: 0.7rem 1rem;
+      border-radius: 18px;
+      border: 2px solid #ff6a1a;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      width: 100%;
+      text-align: center;
+      outline: none;
+      color-scheme: dark;
+    }
+    .date-input:focus { border-color: #ffaa55; box-shadow: 0 0 10px rgba(255,100,0,0.5); }
+
+    .opcoes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem; width: 100%;
+    }
+    .opcao {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,100,30,0.4);
+      border-radius: 18px;
+      padding: 0.9rem 0.4rem;
+      font-family: 'Lilita One', cursive;
+      font-size: 1.05rem;
+      color: #fff;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .opcao span.icon { font-size: 2rem; }
+    .opcao:hover  { border-color: #ff8844; transform: scale(1.04); }
+    .opcao.selected {
+      border-color: #ffaa44;
+      background: rgba(255,120,30,0.3);
+      box-shadow: 0 0 14px rgba(255,100,0,0.5);
+    }
+
+    .pinguim-img {
+      width: 220px; height: 220px; object-fit: contain;
+      filter: drop-shadow(0 0 22px rgba(255,120,30,0.7));
+      animation: swing 1.8s ease-in-out infinite;
+    }
+    @keyframes swing {
+      0%,100% { transform: rotate(-5deg); }
+      50%      { transform: rotate(5deg); }
+    }
+    .resumo {
+      background: rgba(40,10,0,0.75);
+      border: 2px solid #ff6a1a;
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      color: #ffe0c8;
+      font-size: 1.05rem;
+      font-family: 'Satisfy', cursive;
+      line-height: 1.8;
+      box-shadow: 0 0 20px rgba(255,100,0,0.3);
+    }
+
+    .divisor { font-size: 1.3rem; letter-spacing: 8px; margin: 0.6rem 0; }
+
+    /* ===== CONFETE FINAL ===== */
+    .confete { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
+    .confete span {
+      position: absolute; top: -40px;
+      font-size: 1.8rem;
+      animation: fallDown linear forwards;
+    }
+    @keyframes fallDown {
+      to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="coracoes-bg" id="bgHearts"></div>
+
+<div class="container">
+
+  <!-- ======= PASSO 1 ======= -->
+  <div class="step active" id="step1">
+    <img src="assets/images/emoji_implorando.png" alt="emoji implorando" class="emoji-img" />
+    <div class="balao">PENSA BEM...</div>
+    <div class="card">
+      <p class="pergunta">Você aceitaria ir à<br>um date comigo?</p>
+      <div class="btns-row">
+        <button class="btn-sim" onclick="irParaPasso2()">SIM</button>
+        <button class="btn-nao" id="btnNao">NÃO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= PASSO 2 ======= -->
+  <div class="step" id="step2">
+    <div class="divisor">🌹💖🌹</div>
+    <h1 class="titulo-step">Você disse sim? 🥺</h1>
+    <img src="assets/images/emoji_sedutor.png" alt="emoji sedutor" class="emoji-img" />
+    <p class="subtitulo-step">Eu tava esperando você dizer não kkkkkk 😎</p>
+    <div class="divisor">💖🌹💖</div>
+    <button class="btn-proximo" onclick="irPara('step3')">Próximo ❤️</button>
+  </div>
+
+  <!-- ======= PASSO 3 ======= -->
+  <div class="step" id="step3">
+    <div class="divisor">🗓️💕🗓️</div>
+    <h1 class="titulo-step">Quando você tá livre? 🗓️</h1>
+    <p class="subtitulo-step">Escolhe um dia especial pra gente 💕</p>
+    <div class="card">
+      <input type="datetime-local" class="date-input" id="dataHora" />
+      <button class="btn-proximo" onclick="confirmarData()">Escolher data ❤️</button>
+    </div>
+  </div>
+
+  <!-- ======= PASSO 4 ======= -->
+  <div class="step" id="step4">
+    <div class="divisor">🍕🎬🍕</div>
+    <h1 class="titulo-step">O que tá afim? 😋</h1>
+    <p class="subtitulo-step">Escolhe o que mais te agrada 💖</p>
+    <div class="card">
+      <div class="opcoes">
+        <div class="opcao" onclick="selecionarOpcao(this, 'Hambúrguer 🍔')">
+          <span class="icon">🍔</span> Hambúrguer
+        </div>
+        <div class="opcao" onclick="selecionarOpcao(this, 'Massas 🍝')">
+          <span class="icon">🍝</span> Massas
+        </div>
+        <div class="opcao" onclick="selecionarOpcao(this, 'Pizza 🍕')">
+          <span class="icon">🍕</span> Pizza
+        </div>
+        <div class="opcao" onclick="selecionarOpcao(this, 'Cinema 🎬🍿')">
+          <span class="icon">🎬</span> Cinema
+        </div>
+      </div>
+      <button class="btn-proximo" id="btnBora" disabled onclick="irParaFinal()">
+        Selecione Primeiro ☝️
+      </button>
+    </div>
+  </div>
+
+  <!-- ======= PASSO 5 ======= -->
+  <div class="step" id="step5">
+    <div class="divisor">💖🌹💖</div>
+    <h1 class="titulo-step">Tô contigo, Gatinha 🌹</h1>
+    <img src="assets/images/pinguim_flores.png" alt="pinguim com flores" class="pinguim-img" />
+    <div class="resumo" id="resumoFinal"></div>
+    <div class="divisor">💖🌹💖</div>
+    <p class="subtitulo-step" style="margin-top:0.5rem; font-size:0.95rem;">
+      Fica pronta que eu vou te buscar 🥰
+    </p>
+  </div>
+
+</div>
+
+<div class="confete" id="confete"></div>
+
+<script>
+  /* ===== CORAÇÕES 3D DE FUNDO ===== */
+  const bgEl = document.getElementById('bgHearts');
+  const heartEmojis = ['🖤','🖤','🖤','💙','🖤','🖤','💜'];
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('span');
+    s.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+    s.style.left = Math.random() * 100 + '%';
+    s.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
+    s.style.animationDuration = (Math.random() * 9 + 7) + 's';
+    s.style.animationDelay = (Math.random() * 9) + 's';
+    s.style.filter = 'drop-shadow(0 4px 8px rgba(0,0,0,0.5)) brightness(0.5)';
+    bgEl.appendChild(s);
+  }
+
+  /* ===== VARIÁVEIS ===== */
+  let dataSelecionada = '';
+  let localSelecionado = '';
+
+  /* ===== BOTÃO NÃO — FOGE ===== */
+  const btnNao = document.getElementById('btnNao');
+
+  function posicionarNaoInicial() {
+    // posição inicial: alinhado ao lado do SIM dentro do card
+    const card = document.querySelector('#step1 .card');
+    const cardRect = card.getBoundingClientRect();
+    const btnSimRect = document.querySelector('.btn-sim').getBoundingClientRect();
+    btnNao.style.top = btnSimRect.top + 'px';
+    btnNao.style.left = (btnSimRect.right + 12) + 'px';
+  }
+
+  function escapar() {
+    const margin = 20;
+    const bw = btnNao.offsetWidth || 100;
+    const bh = btnNao.offsetHeight || 50;
+    const maxX = window.innerWidth - bw - margin;
+    const maxY = window.innerHeight - bh - margin;
+    const rx = Math.floor(Math.random() * (maxX - margin)) + margin;
+    const ry = Math.floor(Math.random() * (maxY - margin)) + margin;
+    btnNao.style.left = rx + 'px';
+    btnNao.style.top  = ry + 'px';
+  }
+
+  btnNao.addEventListener('mouseenter', escapar);
+  btnNao.addEventListener('touchstart', (e) => { e.preventDefault(); escapar(); });
+  btnNao.addEventListener('click', escapar);
+
+  window.addEventListener('load', posicionarNaoInicial);
+  window.addEventListener('resize', posicionarNaoInicial);
+
+  /* ===== NAVEGAÇÃO ===== */
+  function irPara(id) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (id !== 'step1') btnNao.style.display = 'none';
+  }
+
+  function irParaPasso2() { irPara('step2'); }
+
+  /* ===== PASSO 3 ===== */
+  function confirmarData() {
+    const val = document.getElementById('dataHora').value;
+    if (!val) { alert('Escolhe uma data, linda! 🗓️💕'); return; }
+    const d = new Date(val);
+    dataSelecionada = d.toLocaleDateString('pt-BR', {
+      weekday: 'long', year: 'numeric', month: 'long',
+      day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    irPara('step4');
+  }
+
+  /* ===== PASSO 4 ===== */
+  function selecionarOpcao(el, nome) {
+    document.querySelectorAll('.opcao').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    localSelecionado = nome;
+    const btn = document.getElementById('btnBora');
+    btn.textContent = 'Bora! ❤️';
+    btn.disabled = false;
+  }
+
+  function irParaFinal() {
+    document.getElementById('resumoFinal').innerHTML =
+      `📅 <strong>${dataSelecionada}</strong><br>🍽️ <strong>${localSelecionado}</strong><br><br>Já tô babando só de pensar 😍💖`;
+    irPara('step5');
+    dispararConfete();
+  }
+
+  /* ===== CONFETE ===== */
+  function dispararConfete() {
+    const c = document.getElementById('confete');
+    c.innerHTML = '';
+    const lista = ['💖','🌹','💕','✨','💗','🌸','💝','⭐','🎉','❤️'];
+    for (let i = 0; i < 40; i++) {
+      const s = document.createElement('span');
+      s.textContent = lista[Math.floor(Math.random() * lista.length)];
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+      s.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+      s.style.animationDelay = (Math.random() * 1.5) + 's';
+      c.appendChild(s);
+      setTimeout(() => s.remove(), 4500);
+    }
+  }
+</script>
+</body>
+</html>
